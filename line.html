@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+
+    <!--
+          미디어 타입 설정 => place 태그로 렛시 브라우저에 AR 컨텐츠의 미디어 쿼리임을 알려준다.
+    -->
+    <style media="place">
+
+        #target1 {
+            -letsee-target: uri('https://d.letsee.io/EMdTOnQqEjfW');
+            -letsee-position: coords(0, 0, 0);
+        }
+
+    </style>
+
+
+    <!-- 큐브를 위한 스크립트 로드 -->
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/86/three.min.js"></script>
+
+
+    <head>
+
+        <script>
+
+
+            var renderer;
+            var world;
+
+
+
+            // 색상값을 저장하고 있는 배열입니다.
+            var color = [
+                0xff0000,
+                0xff8c00,
+                0xffff00,
+                0x008000,
+                0x0000ff,
+                0x4b0082,
+                0x800080,
+                0xff1493,
+                0xf4a460
+
+            ]
+
+            var colorIndex;
+
+
+            /////드로잉 관련 함수들///////////
+
+            var lastPoint=null;
+
+
+            // touchStart 이벤트가 동작할때 처음 좌표값을 lastPoint변수에 저장합니다.
+
+            function startDraw(event) {
+
+
+
+
+                var clientX = event.touches[0].clientX - (window.innerWidth / 2);
+                var clientY = - event.touches[0].clientY + (window.innerHeight / 2);
+
+
+                lastPoint = new THREE.Vector3(clientX,clientY,0)
+
+                console.log("startDraw() 수행")
+                console.log(lastPoint)
+
+            }
+
+
+            // Three.js 로 라인을 drawing 하는 함수입니다.
+
+            function doDraw(event) {
+
+                //console.log("doDraw() 수행")
+
+                console.log(event.touches[0].clientX)
+                console.log(event.touches[0].clientY)
+
+
+                if(lastPoint)
+                {
+
+                    console.log("doDraw() 수행 1111")
+
+                    var clientX = event.touches[0].clientX - (window.innerWidth / 2);
+                    var clientY = - event.touches[0].clientY + (window.innerHeight / 2);
+
+                    var pos = new THREE.Vector3(clientX,clientY,0);
+
+                    var material = new THREE.LineBasicMaterial({
+                        color: 0x0000ff
+                    });
+
+                    var geometry =  new THREE.Geometry();
+
+
+                    if( Math.abs(lastPoint.x - pos.x) < 500 && Math.abs(lastPoint.y - pos.y) < 500 )
+                    {
+                        geometry.vertices.push(lastPoint);
+                        geometry.vertices.push(pos);
+
+
+                        console.log("doDraw() 수행 2222")
+
+
+                        var line = new THREE.Line(geometry, material);
+
+                        world.add(line)
+                        lastPoint = pos;
+
+                    }
+                }
+            }
+
+
+            function stopDraw(event)
+            {
+
+
+                console.log("stopDraw() 수행")
+                lastPoint = null;
+
+            }
+
+
+
+
+
+
+
+
+
+            // 1. ThreeWebGL Renderer를 설정합니다.
+            // 2. 빛을 추가합니다.
+            // 3. mesh를 추가합니다. ==>
+
+
+            window.addEventListener("letsee.load", function () {
+
+
+                // --(1)
+                renderer = new THREEWebGLRenderer();
+                world = new THREE.Object3D();
+                renderer.addObjectToEntity('https://d.letsee.io/EMdTOnQqEjfW', world);
+
+
+                var light = new THREE.AmbientLight(0xffffff, 0.5);
+                light.position.set(100, 100, 100)
+                world.add(light)
+
+
+                var light2 = new THREE.PointLight(0xffffff, 0.5);
+                light2.position.set(200, 200, 200)
+
+                world.add(light2)
+
+
+
+                // 이벤트 전달
+
+                document.addEventListener('touchstart', startDraw);
+                document.addEventListener('touchmove', doDraw);
+                document.addEventListener('touchend', stopDraw);
+
+            })
+        </script>
+    </head>
+<body>
+
+0xff0000,
+0xff8c00,
+0xffff00,
+0x008000,
+0x0000ff,
+0x4b0082,
+0x800080,
+
+
+<table border="0" style="width: 90% ;height:8%; margin-top:130%;margin-left:5% ; z-index: 999 ;position: absolute">
+
+    <tbody border="0">
+    <tr style="width:100% ;height:8%">
+
+        <td style='width:8%; height:10%' bgcolor="#ff0000" onclick="func2()"></td>
+
+        <td style='width:8%; height:10%' bgcolor="#0000ff" onclick="func1()"></td>
+
+        <td style='width:8%; height:10%' bgcolor="#00ff00" onclick="func3()"></td>
+
+
+        <td style='width:8%; height:10%' bgcolor="#ff0000" onclick="func2()"></td>
+
+        <td style='width:8%; height:10%' bgcolor="#0000ff" onclick="func1()"></td>
+
+        <td style='width:8%; height:10%' bgcolor="#00ff00" onclick="func3()"></td>
+
+        <td style='width:8%; height:10%' bgcolor="#ff0000" onclick="func2()"></td>
+
+
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>
