@@ -37,8 +37,6 @@
             var renderer;
             var world;
 
-            var Camera;
-
 
             // 색상값을 저장하고 있는 배열입니다.
             var color = [
@@ -85,13 +83,13 @@
 
                 //console.log("doDraw() 수행")
 
-                //console.log(event.touches[0].clientX)
-                //console.log(event.touches[0].clientY)
+                console.log(event.touches[0].clientX)
+                console.log(event.touches[0].clientY)
 
 
                 if (lastPoint) {
 
-
+                    console.log("doDraw() 수행 1111")
 
                     var clientX = event.touches[0].clientX - (window.innerWidth / 2);
                     var clientY = -event.touches[0].clientY + (window.innerHeight / 2);
@@ -99,8 +97,7 @@
                     var pos = new THREE.Vector3(clientX, clientY, 0);
 
                     var material = new THREE.LineBasicMaterial({
-                        color: 0xffffff,
-                        linewidth:4
+                        color: 0x0000ff
                     });
 
                     var geometry = new THREE.Geometry();
@@ -111,7 +108,7 @@
                         geometry.vertices.push(pos);
 
 
-
+                        console.log("doDraw() 수행 2222")
 
 
                         var line = new THREE.Line(geometry, material);
@@ -125,22 +122,6 @@
 
 
             //////////////////////좌표값 관련 함수들 /////////////////////////////
-
-
-            function scanAndroid () {
-
-
-
-            }
-
-            // 렛시 카메라의 viewMatrix를 출력합니다.
-
-            function scanLetsee() {
-
-
-
-
-            }
 
 
 
@@ -169,8 +150,6 @@
                 renderer.addObjectToEntity('https://d.letsee.io/EMdTOnQqEjfW', world);
 
 
-
-
                 var light = new THREE.AmbientLight(0xffffff, 0.5);
                 light.position.set(100, 100, 100)
                 world.add(light)
@@ -190,19 +169,6 @@
 
 
                 document.addEventListener('touchmove', scanAndroid)
-                document.addEventListener('touchmove', scanLetsee)
-
-
-
-
-
-                console.log(letsee)
-
-                console.log(letsee.place)
-
-                console.log(letsee.tracker)
-
-                console.log(letsee.renderer)
 
 
 
@@ -214,6 +180,31 @@
 
 <div>
 
+    <table id="color" border="0" style="width: 85% ;height:7%; margin-top:120%;margin-left:7% ; z-index: 999 ;position: absolute">
+
+        <tbody border="0">
+        <tr style="width:100% ;height:8%">
+
+            <td bgcolor="#ff0000" onclick="func2()"></td>
+
+            <td bgcolor="#ff8c00" onclick="func1()"></td>
+
+            <td bgcolor="#ffff00" onclick="func3()"></td>
+
+
+            <td bgcolor="#008000" onclick="func2()"></td>
+
+            <td bgcolor="#0000ff" onclick="func1()"></td>
+
+            <td bgcolor="#4b0082" onclick="func3()"></td>
+
+            <td bgcolor="#800080" onclick="func2()"></td>
+
+        </tr>
+        </tbody>
+    </table>
+
+
     <table id="axis" style="margin-top:140%; z-index: 999 ;position: absolute ">
         <tbody>
         <tr>
@@ -221,11 +212,11 @@
         </tr>
         <tr>
 
-            <td><div id="xCam"></div></td>
+            <td>x :</td>
 
-            <td><div id="yCam"></div></td>
+            <td>y :</td>
 
-            <td><div id="zCam"></div></td>
+            <td>z :</td>
 
         </tr>
 
