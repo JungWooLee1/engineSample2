@@ -17,8 +17,13 @@
         #axis td {
 
             font-size: 0.7em;
-            width:45%;
+            width:39%;
+
+
+
         }
+
+
 
     </style>
 
@@ -27,6 +32,9 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/86/three.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
 
 
     <head>
@@ -38,21 +46,19 @@
             var world;
 
 
-            // 색상값을 저장하고 있는 배열입니다.
-            var color = [
-                0xff0000,
-                0xff8c00,
-                0xffff00,
-                0x008000,
-                0x0000ff,
-                0x4b0082,
-                0x800080,
-                0xff1493,
-                0xf4a460
 
-            ]
+            // Three.js 의 line Object3D를 저장하는 배열입니다.
 
-            var colorIndex;
+
+            var lines =[];
+
+
+            var lineObjects = [];
+
+
+            var index =0;
+
+
 
 
             /////드로잉 관련 함수들///////////
@@ -71,8 +77,10 @@
 
                 lastPoint = new THREE.Vector3(clientX, clientY, 0)
 
-                console.log("startDraw() 수행")
-                console.log(lastPoint)
+
+
+                // line들의 집합을 저장하고 있는 lines 초기화
+                lines = [];
 
             }
 
@@ -83,13 +91,13 @@
 
                 //console.log("doDraw() 수행")
 
-                console.log(event.touches[0].clientX)
-                console.log(event.touches[0].clientY)
+                //console.log(event.touches[0].clientX)
+                //console.log(event.touches[0].clientY)
 
 
                 if (lastPoint) {
 
-                    console.log("doDraw() 수행 1111")
+
 
                     var clientX = event.touches[0].clientX - (window.innerWidth / 2);
                     var clientY = -event.touches[0].clientY + (window.innerHeight / 2);
@@ -97,7 +105,8 @@
                     var pos = new THREE.Vector3(clientX, clientY, 0);
 
                     var material = new THREE.LineBasicMaterial({
-                        color: 0x0000ff
+                        color: 0xffffff,
+                        linewidth:4
                     });
 
                     var geometry = new THREE.Geometry();
@@ -108,12 +117,20 @@
                         geometry.vertices.push(pos);
 
 
-                        console.log("doDraw() 수행 2222")
+
 
 
                         var line = new THREE.Line(geometry, material);
 
                         world.add(line)
+
+
+                        lines.push(line)
+
+
+
+
+
                         lastPoint = pos;
 
                     }
@@ -124,13 +141,67 @@
             //////////////////////좌표값 관련 함수들 /////////////////////////////
 
 
+            function scanAndroid2 (event) {
+
+
+                console.log(event)
+
+
+                /*
+                $('#pitch').innerHTML = "pitch : " + location.pitch
+
+                $('#roll').innerHTML = "roll : " + location.roll
+
+                $('#yaw').innerText = 'yaw : ' + location.yaw
+                */
+
+
+            }
+
+            // 렛시 카메라의 viewMatrix를 출력합니다.
+
+            function scanLetsee() {
+
+
+
+
+            }
+
+
 
 
 
             function stopDraw(event) {
 
 
+                lineObjects.push(lines.slice())
+
+
+
+
+
+                // lineObjects는 Three.js의 Lines들의 배열을 가지고 있는 함수입니다.
+
+                // 각 line들을 control 할 수 있도록 line이 추가될때마다 동적으로 control 버튼을 추가하고 onClick 이벤트가 일어날 때 lineObjects의 index 값을 변경해 줌으로써
+
+                // control할 객체를 선택합니다.
+
+                // 객체들을 처음에 그려지는 순서대로 4개까지 저장됩니다.
+
+
+
+                if(lineObjects.length<5)
+                {
+
+                    $(".lineTR").append("<td><button onclick='transIndex(event)' value='"+(lineObjects.length -1)+"' >'"+lineObjects.length+"'</button></td>")
+
+
+                }
                 console.log("stopDraw() 수행")
+
+
+
+
                 lastPoint = null;
 
             }
@@ -150,6 +221,8 @@
                 renderer.addObjectToEntity('https://d.letsee.io/EMdTOnQqEjfW', world);
 
 
+
+
                 var light = new THREE.AmbientLight(0xffffff, 0.5);
                 light.position.set(100, 100, 100)
                 world.add(light)
@@ -161,90 +234,270 @@
                 world.add(light2)
 
 
-                // 이벤트 전달
+
+                // Draw를 위한 이벤트 전달
 
                 document.addEventListener('touchstart', startDraw);
                 document.addEventListener('touchmove', doDraw);
                 document.addEventListener('touchend', stopDraw);
 
 
-                document.addEventListener('touchmove', scanAndroid)
+
+
+                console.log(letsee)
+
+
+                // 좌표값을 위한 이벤트 전달
+
+                //document.addEventListener('touchmove', scanAndroid)
+
+                document.addEventListener('touchmove', scanLetsee)
+
+
+
+
 
 
 
 
             })
+
+            // rotation 관련 함수
+
+            function roX() {
+
+                world.rotation.x  = world.rotation.x + Math.PI /4
+
+            }
+
+            function roY() {
+
+                world.rotation.y  = world.rotation.y + Math.PI /4
+
+            }
+
+            function roZ() {
+
+                world.rotation.z  = world.rotation.z + Math.PI /4
+
+            }
+
+            /////////////////////////////////////////////////////////////
+
+            // translation 관련 함수
+
+
+
+
+            function rotationX() {
+
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].rotation.x = array[index].rotation.x + Math.PI /4
+
+                })
+
+            }
+
+            function rotationY() {
+
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].rotation.y = array[index].rotation.y + Math.PI /4
+
+                })
+
+            }
+
+            function rotationZ() {
+
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].rotation.z = array[index].rotation.z + Math.PI /4
+
+                })
+
+            }
+
+
+
+
+
+            function transUpX() {
+
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].position.x = array[index].position.x +10
+
+                })
+
+
+            }
+
+            function transUpY() {
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].position.y = array[index].position.y +10
+                })
+
+            }
+
+            function transUpZ() {
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].position.z = array[index].position.z +10
+                })
+
+
+            }
+
+
+            function transDownX() {
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].position.x = array[index].position.x -10
+
+                })
+
+            }
+
+            function transDownY() {
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].position.y = array[index].position.y - 10
+
+                })
+            }
+
+            function transDownZ() {
+
+                lineObjects[index].forEach(function(element,index,array) {
+
+
+                    array[index].position.z = array[index].position.z - 10
+
+                })
+
+
+            }
+
+
+            // td 동적으로 추가하기
+
+
+            function transIndex(e) {
+
+                index=e.target.value
+
+
+                var myIndex=parseInt(index) +1
+
+
+
+
+                window.alert(myIndex+"번째 요소 선택")
+                console.log('tra nsIndex :' + index)
+
+
+            }
+
+
         </script>
     </head>
-<body>
+    <div>
 
-<div>
+        <table id="axis" style="margin-top:120%; z-index: 999 ;position: absolute ">
+            <tbody>
+            <tr>
+                <td>Letsee 카메라 :</td>
+            </tr>
+            <tr>
 
-    <table id="color" border="0" style="width: 85% ;height:7%; margin-top:120%;margin-left:7% ; z-index: 999 ;position: absolute">
+                <td><div id="xCam"></div></td>
 
-        <tbody border="0">
-        <tr style="width:100% ;height:8%">
+                <td><div id="yCam"></div></td>
 
-            <td bgcolor="#ff0000" onclick="func2()"></td>
+                <td><div id="zCam"></div></td>
 
-            <td bgcolor="#ff8c00" onclick="func1()"></td>
-
-            <td bgcolor="#ffff00" onclick="func3()"></td>
-
-
-            <td bgcolor="#008000" onclick="func2()"></td>
-
-            <td bgcolor="#0000ff" onclick="func1()"></td>
-
-            <td bgcolor="#4b0082" onclick="func3()"></td>
-
-            <td bgcolor="#800080" onclick="func2()"></td>
-
-        </tr>
-        </tbody>
-    </table>
+            </tr>
 
 
-    <table id="axis" style="margin-top:140%; z-index: 999 ;position: absolute ">
-        <tbody>
-        <tr>
-            <td>Letsee 카메라 :</td>
-        </tr>
-        <tr>
+            <tr>
+                <td>Android 센서 모션 :</td>
 
-            <td>x :</td>
+            </tr>
 
-            <td>y :</td>
+            <tr>
+                <td><div id="pitch"></div></td>
 
-            <td>z :</td>
+                <td><div id="yaw"></div></td>
 
-        </tr>
+                <td><div id="roll"></div></td>
 
-
-        <tr>
-            <td>Android 센서 모션 :</td>
-
-        </tr>
-
-        <tr>
-            <td>roll :</td>
-
-            <td>pitch :</td>
-
-            <td>Yaw :</td>
-
-        </tr>
+            </tr>
 
 
-        </tbody>
+            <tr>
+                <td><button onclick="rotationX()">x축 회전</button> </td>
 
-    </table>
+                <td><button onclick="rotationY()">y축 회전</button> </td>
+
+                <td><button onclick="rotationZ()">z축 회전</button> </td>
+            </tr>
+
+            <tr class="trans">
 
 
-</div>
+                <td><button onclick="transUpX()">x축 이동 +</button> </td>
+
+                <td><button onclick="transUpY()">y축 이동 +</button> </td>
+
+                <td><button onclick="transUpZ()">z축 이동 +</button> </td>
+
+
+            </tr>
+
+            <tr class="trans">
+
+                <td><button onclick="transDownX()">x축 이동 -</button> </td>
+
+                <td><button onclick="transDownY()">y축 이동 -</button> </td>
+
+                <td><button onclick="transDownZ()">z축 이동 -</button> </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+
+        <table border="1px solid red"  style="margin-top:160%; z-index: 999 ;position: absolute ">
+            <tr class="lineTR">
+
+
+            </tr>
+        </table>
+
+
+    </div>
 
 
 
 
-</body>
+    </body>
 </html>
