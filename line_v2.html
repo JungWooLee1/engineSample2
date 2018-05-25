@@ -76,75 +76,10 @@
 
             // 카메라의 쿼터니언에 대한 변수입니다.
 
-            var quaterCamera=null;
-
-            var eulerX;
-
-            var eulerY;
-
-            var eulerZ;
-
+            var quater;
 
 
             // *******************************************************//
-
-
-
-
-            window.addEventListener("letsee.load", function () {
-
-
-                // --(1)
-                renderer = new THREEWebGLRenderer();
-                world = new THREE.Object3D();
-                renderer.addObjectToEntity('https://d.letsee.io/EMdTOnQqEjfW', world);
-
-
-
-
-                var light = new THREE.AmbientLight(0xffffff, 0.5);
-                light.position.set(100, 100, 100)
-                world.add(light)
-
-
-                var light2 = new THREE.PointLight(0xffffff, 0.5);
-                light2.position.set(200, 200, 200)
-
-                world.add(light2)
-
-
-
-                // Draw를 위한 이벤트 전달
-
-                document.addEventListener('touchstart', startDraw);
-                document.addEventListener('touchmove', doDraw);
-                document.addEventListener('touchend', stopDraw);
-
-
-
-
-
-
-
-                // 좌표값을 위한 이벤트 전달
-
-                //document.addEventListener('touchmove', scanAndroid)
-
-                document.addEventListener('touchmove', scanLetsee)
-
-
-
-
-                // trackmove 이벤트 document 에 추가
-
-                document.addEventListener("trackmove",trackHandler);
-
-
-
-
-            })
-
-
 
 
 
@@ -225,42 +160,24 @@
 
 
 
-
                         var line = new THREE.Line(geometry, material);
 
 
+                        //var lineQuater =  line.quaternion;
 
 
+
+
+                        var a = new Array(16) ;
 
 
                         /*
-                        var degreeX = - (eulerX * Math.PI) / 180
-
-                        line.rotateX(degreeX)
-
+                        console.log("--------렛시 매트릭스---------")
+                        console.log(cameraMatrix)
 
 
-                        var eulerY_ = 0;
-
-                        if(eulerY >5) {
-                            eulerY_ = eulerY +25;
-                        }
-                        else if(eulerY<-5)
-                        {
-                            eulerY_ = eulerY-25;
-                        }
-
-                        console.log(eulerY_)
-                        var degreeY = - (eulerY_ * Math.PI) / 180
-
-
-                        line.rotateY(degreeY)
-
-
-
-                        var degreeZ = (eulerZ * Math.PI) / 180
-
-                        line.rotateZ(degreeZ)
+                        console.log("--------Line의 매트릭스---------")
+                        console.log(line.matrixWorld)
 
                         */
 
@@ -269,11 +186,10 @@
 
 
 
-                        // 부모 Object3D 에 Line Object3D를 추가하는 메서드
+
+
+
                         world.add(line)
-
-
-                        // 라인 Object들을 저장하고 1개로 묶어주는 메서드
                         lines.push(line)
 
                         lastPoint = pos;
@@ -352,24 +268,7 @@
             // 3. mesh를 추가합니다. ==>
 
 
-            Math.degrees = function(radians) {
-                return radians * 180 / Math.PI;
-            };
-
-            Math.radians = function(degrees) {
-                return degrees * Math.PI / 180;
-            };
-
-
-
-
-
-
-
-
-
-            // trcakmove 이벤트 핸들러
-            function trackHandler(e) {
+            function trackCheck(e) {
 
 
                 //console.log(e.detail.matrix.elements)
@@ -383,16 +282,18 @@
                     quaternion: new THREE.Quaternion(),
                     scale:new THREE.Vector3()
                 };
-
-
                 cameraMatrix.decompose(object.position, object.quaternion, object.scale);
 
 
 
-                /*
+                xValue = object.position.x;
+                yValue = object.position.y;
+                zValue = object.position.z-200;
 
-                // 로그를 편하게 보기위한 코드입니다 .
-                // 지워도 상관 없습니다.
+
+                quater = object.quaternion;
+
+
 
                 object.position.x = object.position.x.toFixed(2)
                 object.position.y = object.position.y.toFixed(2)
@@ -407,105 +308,87 @@
                 object.scale.y = object.scale.y.toFixed(2)
                 object.scale.z = object.scale.z.toFixed(2)
 
-                */
 
                 /*
                 console.log("-----------------")
                 console.log("포지션")
                 console.log(object.position)
+                */
+
+
 
                 console.log("-----------------")
                 console.log("쿼터니언")
                 console.log(object.quaternion)
 
+
+                /*
                 console.log("-----------------")
                 console.log("스케일")
                 console.log(object.scale)
                 */
 
-
-
-
-
-
-
-
-
-                var eulerCamera = new THREE.Euler()
-
-                eulerCamera.setFromQuaternion(object.quaternion.normalize(),"ZXY");
-
-
-
-
-
-
-
-                //console.log("오일러 각도")
-                //console.log(Math.degrees(eulerCamera.x) +" "+Math.degrees(eulerCamera.y)+" "+Math.degrees(eulerCamera.z))
-
-
-
-                // 카메라의 euler x축
-                eulerX = Math.degrees(eulerCamera.x) * -1;
-
-
-                //eulerX = Math.round(eulerX);
-
-                Math.round(eulerX)
-
-
-                // 카메라의 euler y축
-
-                eulerY = Math.degrees(eulerCamera.y) + 180 ;
-
-
-                if( 180 < eulerY && eulerY <=360) {
-
-                    eulerY = eulerY - 360
-                }
-
-                Math.round(eulerY)
-
-
-                // 카메라의 euler z축
-
-
-
-                eulerZ = Math.degrees(eulerCamera.z) - 90;
-
-                if(eulerZ >= -270 && eulerZ< -180)
-                {
-                    eulerZ = 360 + eulerZ
-                }
-
-
-                Math.round(eulerZ)
-
-
-                /////////////////////////////////////////
-                // 실제로 추출한 값을 변수에 저장하는 부분입니다. //
-
-
-
-
-
-                /*
-                xValue = object.position.x;
-                yValue = object.position.y;
-                zValue = object.position.z-200;
-
-                */
-
-                quaterCamera = object.quaternion;
-
-                /////////////////////////////////////////
-
             }
 
 
+            window.addEventListener("letsee.load", function () {
 
 
+                // --(1)
+                renderer = new THREEWebGLRenderer();
+                world = new THREE.Object3D();
+                renderer.addObjectToEntity('https://d.letsee.io/EMdTOnQqEjfW', world);
+
+
+
+
+                var light = new THREE.AmbientLight(0xffffff, 0.5);
+                light.position.set(100, 100, 100)
+                world.add(light)
+
+
+                var light2 = new THREE.PointLight(0xffffff, 0.5);
+                light2.position.set(200, 200, 200)
+
+                world.add(light2)
+
+
+
+                // Draw를 위한 이벤트 전달
+
+                document.addEventListener('touchstart', startDraw);
+                document.addEventListener('touchmove', doDraw);
+                document.addEventListener('touchend', stopDraw);
+
+
+
+
+
+
+
+                // 좌표값을 위한 이벤트 전달
+
+                //document.addEventListener('touchmove', scanAndroid)
+
+                document.addEventListener('touchmove', scanLetsee)
+
+
+
+
+                // trackmove 이벤트 document 에 추가
+
+                document.addEventListener("trackmove",trackCheck);
+
+
+
+
+
+
+
+
+
+
+            })
 
             // rotation 관련 함수
 
