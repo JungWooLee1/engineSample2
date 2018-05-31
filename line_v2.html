@@ -123,10 +123,7 @@
                 //console.log(event.touches[0].clientX)
                 //console.log(event.touches[0].clientY)
 
-
-
                 //console.log(letsee.camera.worldZ)
-
 
                 //console.log(letsee.renderer)
 
@@ -180,10 +177,6 @@
                         console.log(line.matrixWorld)
 
                         */
-
-
-
-
 
 
 
@@ -282,8 +275,9 @@
                     quaternion: new THREE.Quaternion(),
                     scale:new THREE.Vector3()
                 };
-                cameraMatrix.decompose(object.position, object.quaternion, object.scale);
 
+
+                cameraMatrix.decompose(object.position, object.quaternion, object.scale);
 
 
                 xValue = object.position.x;
